@@ -92,4 +92,4 @@ likely affect the final binary size).
 
 
 # MSRV
-MSRV is 1.78. This is to allow this crate to be used as a workaround the breaking change to `Freeze` that was introduced by that version.
+MSRV is 1.78. This is to allow this crate to be used as a workaround the breaking change to const promotion that was introduced by that version.
