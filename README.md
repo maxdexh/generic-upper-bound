@@ -1,12 +1,11 @@
 # generic-upper-bound
 
-Provides functionality to get a const generic `usize` that is that is a reasonable
-upper bound for a specified associated const `usize` for the purpose of intermediate
-const calculations, as a workaround for `generic_const_exprs`.
+This crate allows performing const calculations with the help of a generic const `usize`
+that is a reasonable upper bound of some desired associated const `usize`.
 
 The API of this crate is structed as follows:
 - `AcceptUpperBound` is the heart of this crate. Implementors use it to specify which
-  generic const they want to be passed and what to do with any given upper bound for it.
+  generic const they want to be passed to them and what to do with any given upper bound for it.
 - `eval_with_upper_bound` is used to get the result of evaluating an upper bound acceptor
   with the best-effort upper bound that this crate can offer.
 
@@ -90,6 +89,6 @@ any `&'a [&'b str]` where `'b: 'a` as input and this will also be more efficient
 time) due to the overhead from the inexact upper bound used for each concatenation (which will
 likely affect the final binary size).
 
-
-# MSRV
-MSRV is 1.78. This is to allow this crate to be used as a workaround the breaking change to const promotion that was introduced by that version.
+## MSRV
+The MSRV is 1.78. This is to allow this crate to be used as a workaround for the breaking change
+to const promotion that was introduced by that version.
