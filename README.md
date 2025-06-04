@@ -89,3 +89,7 @@ Note that this example can be generalized and optimized. For instance, it is pos
 any `&'a [&'b str]` where `'b: 'a` as input and this will also be more efficient (most of the
 time) due to the overhead from the inexact upper bound used for each concatenation (which will
 likely affect the final binary size).
+
+
+# MSRV
+MSRV is 1.78. This is to allow this crate to be used as a workaround the breaking change to `Freeze` that was introduced by that version.
