@@ -5,9 +5,9 @@ upper bound for a specified associated const `usize` for the purpose of intermed
 const calculations, as a workaround for `generic_const_exprs`.
 
 The API of this crate is structed as follows:
-- [`AcceptUpperBound`] is the heart of this crate. Implementors use it to specify which
+- `AcceptUpperBound` is the heart of this crate. Implementors use it to specify which
   generic const they want to be passed and what to do with any given upper bound for it.
-- [`eval_with_upper_bound`] is used to get the result of evaluating an upper bound acceptor
+- `eval_with_upper_bound` is used to get the result of evaluating an upper bound acceptor
   with the best-effort upper bound that this crate can offer.
 
 While you cannot use this to write a function with a signature that returns e.g. `[T; M + N]`
