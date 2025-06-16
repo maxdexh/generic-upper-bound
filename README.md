@@ -6,6 +6,7 @@ that is a reasonable upper bound of some desired associated const `usize`.
 The API of this crate is structed as follows:
 - `AcceptUpperBound` is the heart of this crate. Implementors use it to specify which
   generic const they want to be passed to them and what to do with any given upper bound for it.
+  It can be implemented conveniently using `impl_accept_upper_bound!`.
 - `eval_with_upper_bound` is used to get the result of evaluating an upper bound acceptor
   with the best-effort upper bound that this crate can offer.
 
@@ -13,53 +14,25 @@ While you cannot use this to write a function with a signature that returns e.g.
 with generic `M` and `N`, you can use it to temporarily get an array of size `M + N`, use it
 to do something useful, then return the result of that computation.
 For example, you can concatenate two strings at compile time, even if their value is dependent
-on generic paramters:
+on generic parameters:
 ```rust
 use generic_upper_bound as gub;
 pub trait MyTrait {
     const SOME_STR: &'static str;
 }
-impl<A, B> MyTrait for (A, B)
-where
-    A: MyTrait,
-    B: MyTrait,
-{
-    // evaluate our upper bound acceptor to implement concatenation
-    const SOME_STR: &'static str = {
-        let slice: &'static [u8] = gub::eval_with_upper_bound::<Concat<A, B>>();
-
-        // take subslice without trailing zeros and convert to string
-        let total_length = gub::desired_generic::<Concat<A, B>>();
-        match core::str::from_utf8(slice.split_at(total_length).0) {
-            Ok(s) => s,
-            _ => unreachable!(),
-        }
-    };
-}
-
 struct Concat<A, B>(A, B);
-impl<A: MyTrait, B: MyTrait> gub::AcceptUpperBound for Concat<A, B> {
-    type Output = &'static [u8];
-    // Want to be passed at least the total length of the strings
-    const DESIRED_GENERIC: usize = A::SOME_STR.len() + B::SOME_STR.len();
-    // Decide on what to do with each generic const
-    type Eval<const UPPER: usize> = ConcatImpl<A, B, UPPER>;
-}
+gub::impl_accept_upper_bound! {
+    impl{A: MyTrait, B: MyTrait} Concat<A, B>;
 
-struct ConcatImpl<A, B, const N: usize>(A, B);
-impl<A, B, const N: usize> gub::Const for ConcatImpl<A, B, N>
-where
-    A: MyTrait,
-    B: MyTrait,
-{
-    type Type = &'static [u8];
-    // Write the bytes into `[u8; N]` and promote the result
-    const VALUE: Self::Type = &{
+    const DESIRED_GENERIC: usize = A::SOME_STR.len() + B::SOME_STR.len();
+
+    const EVAL<const UPPER: usize>: &'static [u8] = &{
         let l = A::SOME_STR.as_bytes();
         let r = B::SOME_STR.as_bytes();
-        let mut out = [0; N];
+        let mut out = [0; UPPER];
         let mut off = 0;
-        let mut i = 0; // in >=1.86, you can use split_at_mut and copy_from_slice
+        // after 1.86, use split_at_mut and copy_from_slice
+        let mut i = 0;
         while i < l.len() {
             out[off] = l[i];
             off += 1;
@@ -74,7 +47,18 @@ where
         out
     };
 }
-
+impl<A: MyTrait, B: MyTrait> MyTrait for (A, B) {
+    // evaluate the upper bound acceptor, trim trailing nul bytes
+    // and convert to string
+    const SOME_STR: &'static str = match core::str::from_utf8(
+        gub::eval_with_upper_bound::<Concat<A, B>>()
+            .split_at(gub::desired_generic::<Concat<A, B>>())
+            .0,
+    ) {
+        Ok(s) => s,
+        _ => unreachable!(),
+    };
+}
 impl MyTrait for () {
     const SOME_STR: &'static str = "ABC";
 }
@@ -85,10 +69,12 @@ let concatenated: &'static str = <((), i32)>::SOME_STR;
 assert_eq!(concatenated, "ABC123");
 ```
 Note that this example can be generalized and optimized. For instance, it is possible to accept
-any `&'a [&'b str]` where `'b: 'a` as input and this will also be more efficient (most of the
-time) due to the overhead from the inexact upper bound used for each concatenation (which will
+any `&'a [&'b str]` as input and this will also be more efficient (most of the time)
+due to the overhead from the inexact upper bound used for each concatenation (which will
 likely affect the final binary size).
 
 ## MSRV
 The MSRV is 1.78. This is to allow this crate to be used as a workaround for the breaking change
 to const promotion that was introduced by that version.
+
+License: MIT
