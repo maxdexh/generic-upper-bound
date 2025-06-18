@@ -169,8 +169,8 @@ pub const fn eval_with_upper_bound<F: AcceptUpperBound>() -> F::Output {
 
 /// Implements [`AcceptUpperBound`] by generating a hidden [`Const`] implementor.
 ///
-/// Generic parameters are passed in braces (`{...}`) after `impl`.
-/// Where bounds are optionally passed in braces after the implementing type.
+/// Generic parameters are passed in braces (`{...}`) after `impl` and cannot have a trailing
+/// comma. Where bounds are optionally passed in braces after the implementing type.
 ///
 /// The example from the [crate level documentation](crate) can be written manually like this:
 /// ```
@@ -215,7 +215,7 @@ macro_rules! impl_accept_upper_bound {
     } => {
         const _: () = {
             pub struct __Eval<__Eval, const $UPPER: $usize_e>(__Eval);
-            impl<const $UPPER: $usize_e, $($params)*> $crate::Const for __Eval<$Self, $UPPER> $($($where_bounds)*)? {
+            impl<$($params)*, const $UPPER: $usize_e> $crate::Const for __Eval<$Self, $UPPER> $($($where_bounds)*)? {
                 type Type = $Output;
                 const VALUE: Self::Type = $EVAL;
             }
