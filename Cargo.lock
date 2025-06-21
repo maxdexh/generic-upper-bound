@@ -4,4 +4,13 @@ version = 3
 
 [[package]]
 name = "generic-upper-bound"
-version = "2.0.0"
+version = "3.0.0"
+dependencies = [
+ "type-const",
+]
+
+[[package]]
+name = "type-const"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3a73801df54e216c4782a40ec2de05e64097f40d2bf4e0bf1eaaaae7a7303c3b"

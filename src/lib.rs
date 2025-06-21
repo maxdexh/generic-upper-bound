@@ -80,47 +80,7 @@
 //! The MSRV is 1.78. This is to allow this crate to be used as a workaround for the breaking change
 //! to const promotion that was introduced by that version.
 
-/// A trait for a type that holds a value.
-pub trait Const {
-    /// The type of the const
-    type Type;
-    /// The implementation of the value of the const. Use [`const_value`] for accessing the value.
-    const VALUE: Self::Type;
-}
-
-/// Alias for [`Const::Type`].
-pub type TypeOf<C> = <C as Const>::Type;
-
-/// Alias for [`Const::VALUE`]. Prefer this over accessing `VALUE` directly.
-///
-/// Using the associated constant through this function rather than directly causes it to only be
-/// evaluated when the branch that it is used in is actually executed, assuming that the execution
-/// happens at compile time (i.e. this does not apply to usage in regular `fn`s).
-/// This means that it may improve compile times, avoid errors for recursive consts and avoid evaluating
-/// panics.
-///
-/// For example:
-/// ```
-/// # use generic_upper_bound::*;
-/// struct Fallible;
-/// impl Const for Fallible {
-///     type Type = ();
-///     const VALUE: Self::Type = panic!();
-/// }
-/// const _: () = if false { const_value::<Fallible>() };  // this compiles
-/// ```
-/// ```compile_fail
-/// # use generic_upper_bound::*;
-/// # struct Fallible;
-/// # impl Const for Fallible {
-/// #     type Type = ();
-/// #     const VALUE: Self::Type = panic!();
-/// # }
-/// const _: () = if false { Fallible::VALUE }; // this gives a compile error
-/// ```
-pub const fn const_value<C: Const + ?Sized>() -> C::Type {
-    C::VALUE
-}
+pub use type_const::{self, value_of as const_value, Const, TypeOf};
 
 /// Allows implementing a callback pattern that accepts an upper bound for a desired generic const
 /// parameter.
