@@ -2,6 +2,7 @@
 // reason: flagged in macro generated code
 #![allow(clippy::absurd_extreme_comparisons)]
 #![allow(unused_comparisons)]
+#![allow(rustdoc::redundant_explicit_links)]
 
 //! This crate allows performing const calculations with the help of a generic const `usize`
 //! that is a reasonable upper bound of some desired associated const `usize`.
