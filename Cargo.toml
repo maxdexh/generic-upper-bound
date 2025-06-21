@@ -1,6 +1,6 @@
 [package]
 name = "generic-upper-bound"
-version = "3.0.1"
+version = "3.0.2"
 rust-version = "1.78"
 edition = "2021"
 license = "MIT"
