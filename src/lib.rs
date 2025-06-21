@@ -7,10 +7,10 @@
 //! that is a reasonable upper bound of some desired associated const `usize`.
 //!
 //! The API of this crate is structed as follows:
-//! - [`AcceptUpperBound`] is the heart of this crate. Implementors use it to specify which
+//! - [`AcceptUpperBound`](crate::AcceptUpperBound) is the heart of this crate. Implementors use it to specify which
 //!   generic const they want to be passed to them and what to do with any given upper bound for it.
-//!   It can be implemented conveniently using [`impl_accept_upper_bound!`].
-//! - [`eval_with_upper_bound`] is used to get the result of evaluating an upper bound acceptor
+//!   It can be implemented conveniently using [`impl_accept_upper_bound!`](crate::impl_accept_upper_bound).
+//! - [`eval_with_upper_bound`](crate::eval_with_upper_bound) is used to get the result of evaluating an upper bound acceptor
 //!   with the best-effort upper bound that this crate can offer.
 //!
 //! While you cannot use this to write a function with a signature that returns e.g. `[T; M + N]`
@@ -75,6 +75,9 @@
 //! any `&'a [&'b str]` as input and this will also be more efficient (most of the time)
 //! due to the overhead from the inexact upper bound used for each concatenation (which will
 //! likely affect the final binary size).
+//!
+//! See the [`const-util`](https://docs.rs/const-util/latest/const_util/) crate for an
+//! implementation of this.
 //!
 //! # MSRV
 //! The MSRV is 1.78. This is to allow this crate to be used as a workaround for the breaking change
