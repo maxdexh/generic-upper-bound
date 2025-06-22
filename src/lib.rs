@@ -109,26 +109,26 @@ pub trait AcceptUpperBound {
     type Eval<const UPPER: usize>: Const<Type = Self::Output>;
 }
 
-struct Impl<F>(F);
+struct Impl<A>(A);
 
 mod implementation;
 
-/// Returns [`F::DESIRED_GENERIC`](AcceptUpperBound::DESIRED_GENERIC).
-pub const fn desired_generic<F: AcceptUpperBound>() -> usize {
-    Impl::<F>::DESIRED
+/// Returns [`AcceptUpperBound::DESIRED_GENERIC`].
+pub const fn desired_generic<A: AcceptUpperBound>() -> usize {
+    Impl::<A>::DESIRED
 }
 
-/// Returns the parameter that [`eval_with_upper_bound`] passes to [`F::Eval`](AcceptUpperBound::Eval).
-pub const fn get_upper_bound<F: AcceptUpperBound>() -> usize {
-    Impl::<F>::ACTUAL
+/// Returns the parameter that [`eval_with_upper_bound`] passes to [`AcceptUpperBound::Eval`].
+pub const fn get_upper_bound<A: AcceptUpperBound>() -> usize {
+    Impl::<A>::ACTUAL
 }
 
 /// Evaluates [`AcceptUpperBound`].
 ///
 /// In the language of `generic_const_exprs`, this function returns
 /// `const_value::<F::Eval<{ get_upper_bound::<F>() }>>()`
-pub const fn eval_with_upper_bound<F: AcceptUpperBound>() -> F::Output {
-    Impl::<F>::EVAL
+pub const fn eval_with_upper_bound<A: AcceptUpperBound>() -> A::Output {
+    Impl::<A>::EVAL
 }
 
 /// Implements [`AcceptUpperBound`] by generating a hidden [`Const`] implementor.
