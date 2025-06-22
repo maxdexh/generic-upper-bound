@@ -66,8 +66,7 @@
 //! impl MyTrait for () {
 //!     const SOME_STR: &'static str = "ABC";
 //! }
-//! impl MyTrait for i32 {
-//!     const SOME_STR: &'static str = "123";
+//! impl MyTrait for i32 { const SOME_STR: &'static str = "123";
 //! }
 //! let concatenated: &'static str = <((), i32)>::SOME_STR;
 //! assert_eq!(concatenated, "ABC123");
@@ -84,7 +83,8 @@
 //! The MSRV is 1.78. This is to allow this crate to be used as a workaround for the breaking change
 //! to const promotion that was introduced by that version.
 
-pub use type_const::{self, value_of as const_value, Const, TypeOf};
+pub extern crate type_const;
+pub use type_const::{value_of as const_value, Const, TypeOf};
 
 /// Allows implementing a callback pattern that accepts an upper bound for a desired generic const
 /// parameter.
